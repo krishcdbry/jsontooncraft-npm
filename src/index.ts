@@ -24,8 +24,7 @@ export function convertAll(data: any, interfaceName: string = 'GeneratedInterfac
     const zod = jsonToZod(data, interfaceName.endsWith('Schema') ? interfaceName : interfaceName + 'Schema');
     const openapi = jsonToOpenAPI(data, interfaceName);
     const toonStr = jsonToToon(data);
-    const toonData = JSON.parse(toonStr);
-    const tokenStats = compareTokens(data, toonData);
+    const tokenStats = compareTokens(data, toonStr);
 
     return {
       typescript,

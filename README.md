@@ -1,6 +1,12 @@
 # jsontooncraft
 
+[![npm version](https://badge.fury.io/js/jsontooncraft.svg)](https://www.npmjs.com/package/jsontooncraft)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A powerful TypeScript library that converts JSON data to multiple formats: TypeScript interfaces, Zod schemas, OpenAPI schemas, and TOON (Token-Optimized Object Notation) format. Perfect for developers working with APIs, data validation, and schema generation.
+
+**🌐 Website:** [jsontooncraft.com](https://jsontooncraft.com)
+**📦 npm:** [npmjs.com/package/jsontooncraft](https://www.npmjs.com/package/jsontooncraft)
 
 ## Features
 
@@ -532,25 +538,29 @@ TOON (Token-Optimized Object Notation) is designed to reduce token usage when wo
 **Standard JSON:**
 ```json
 {
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "john@example.com"
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "isActive": true,
+  "roles": ["admin", "user"]
 }
 ```
 
 **TOON Format:**
-```json
-{
-  "k": ["firstName", "lastName", "email"],
-  "v": ["John", "Doe", "john@example.com"]
-}
+```
+id: 1
+name: John Doe
+email: john@example.com
+isActive: true
+roles[2]: admin,user
 ```
 
 **Benefits:**
-- Reduces repetitive key-value pair formatting
-- Saves tokens when keys are long or repetitive
-- Especially effective with large datasets
-- Easy to convert back to standard JSON
+- **YAML-like syntax**: Clean, human-readable format
+- **Compact arrays**: `key[count]: val1,val2,val3` notation
+- **Token efficient**: Reduces formatting overhead
+- **Nested structure support**: Handles complex objects with indentation
+- **Bidirectional**: Easy conversion between JSON and TOON
 
 ## TypeScript Support
 
@@ -576,14 +586,15 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Issues
 
-Found a bug or have a feature request? Please open an issue on [GitHub](https://github.com/yourusername/jsontooncraft-npm).
+Found a bug or have a feature request? Please open an issue on [GitHub](https://github.com/krishcdbry/jsontooncraft-npm/issues).
 
 ## Author
 
-Created by [Your Name]
+Created by [Krish](https://github.com/krishcdbry)
 
 ## Links
 
-- [GitHub Repository](https://github.com/yourusername/jsontooncraft-npm)
-- [npm Package](https://www.npmjs.com/package/jsontooncraft)
-- [Documentation](https://github.com/yourusername/jsontooncraft-npm#readme)
+- 🌐 **Website**: [jsontooncraft.com](https://jsontooncraft.com)
+- 📦 **npm Package**: [npmjs.com/package/jsontooncraft](https://www.npmjs.com/package/jsontooncraft)
+- 💻 **GitHub Repository**: [github.com/krishcdbry/jsontooncraft-npm](https://github.com/krishcdbry/jsontooncraft-npm)
+- 📖 **Documentation**: [jsontooncraft.com/docs](https://jsontooncraft.com)

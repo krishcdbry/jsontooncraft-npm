@@ -59,7 +59,7 @@ describe('tokenCounter', () => {
     });
 
     test('handles empty array', () => {
-      const data = [];
+      const data: any[] = [];
       const tokens = estimateTokens(data);
 
       expect(tokens).toBeGreaterThanOrEqual(0);

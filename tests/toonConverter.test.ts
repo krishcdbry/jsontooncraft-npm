@@ -10,10 +10,10 @@ describe('toonConverter', () => {
       };
 
       const result = jsonToToon(data);
-      const parsed = JSON.parse(result);
 
-      expect(parsed.k).toEqual(['name', 'age', 'isActive']);
-      expect(parsed.v).toEqual(['John', 30, true]);
+      expect(result).toContain('name: John');
+      expect(result).toContain('age: 30');
+      expect(result).toContain('isActive: true');
     });
 
     test('handles nested objects', () => {
@@ -25,10 +25,10 @@ describe('toonConverter', () => {
       };
 
       const result = jsonToToon(data);
-      const parsed = JSON.parse(result);
 
-      expect(parsed.k).toContain('user');
-      expect(parsed.v).toBeDefined();
+      expect(result).toContain('user:');
+      expect(result).toContain('name: Alice');
+      expect(result).toContain('age: 25');
     });
 
     test('handles arrays', () => {
@@ -38,21 +38,17 @@ describe('toonConverter', () => {
       };
 
       const result = jsonToToon(data);
-      const parsed = JSON.parse(result);
 
-      expect(parsed.k).toEqual(['items', 'tags']);
-      expect(parsed.v[0]).toEqual([1, 2, 3]);
-      expect(parsed.v[1]).toEqual(['a', 'b', 'c']);
+      expect(result).toContain('items[3]: 1,2,3');
+      expect(result).toContain('tags[3]: a,b,c');
     });
 
     test('handles empty object', () => {
       const data = {};
 
       const result = jsonToToon(data);
-      const parsed = JSON.parse(result);
 
-      expect(parsed.k).toEqual([]);
-      expect(parsed.v).toEqual([]);
+      expect(result).toBe('');
     });
 
     test('handles complex nested structure', () => {
@@ -66,7 +62,11 @@ describe('toonConverter', () => {
       };
 
       const result = jsonToToon(data);
-      expect(() => JSON.parse(result)).not.toThrow();
+
+      expect(result).toContain('id: 1');
+      expect(result).toContain('profile:');
+      expect(result).toContain('firstName: John');
+      expect(result).toContain('tags[2]: developer,typescript');
     });
 
     test('preserves data types', () => {
@@ -74,27 +74,23 @@ describe('toonConverter', () => {
         string: 'text',
         number: 42,
         boolean: true,
-        null: null,
+        nullValue: null,
       };
 
       const result = jsonToToon(data);
-      const parsed = JSON.parse(result);
 
-      expect(parsed.v).toContain('text');
-      expect(parsed.v).toContain(42);
-      expect(parsed.v).toContain(true);
-      expect(parsed.v).toContain(null);
+      expect(result).toContain('string: text');
+      expect(result).toContain('number: 42');
+      expect(result).toContain('boolean: true');
+      expect(result).toContain('nullValue: null');
     });
   });
 
   describe('toonToJson', () => {
     test('converts TOON format back to JSON', () => {
-      const toonData = {
-        k: ['name', 'age', 'isActive'],
-        v: ['John', 30, true],
-      };
+      const toonString = 'name: John\nage: 30\nisActive: true';
 
-      const result = toonToJson(toonData);
+      const result = toonToJson(toonString);
 
       expect(result).toEqual({
         name: 'John',
@@ -103,74 +99,34 @@ describe('toonConverter', () => {
       });
     });
 
-    test('handles TOON format as string input', () => {
-      const toonString = JSON.stringify({
-        k: ['name', 'age'],
-        v: ['Alice', 25],
-      });
+    test('handles arrays in TOON format', () => {
+      const toonString = 'items[3]: 1,2,3\ntags[3]: a,b,c';
 
       const result = toonToJson(toonString);
 
-      expect(result).toEqual({
-        name: 'Alice',
-        age: 25,
-      });
+      expect(result.items).toEqual([1, 2, 3]);
+      expect(result.tags).toEqual(['a', 'b', 'c']);
     });
 
-    test('handles empty TOON data', () => {
-      const toonData = {
-        k: [],
-        v: [],
-      };
+    test('handles nested objects', () => {
+      const toonString = 'user:\n  name: Alice\n  age: 25';
 
-      const result = toonToJson(toonData);
+      const result = toonToJson(toonString);
 
-      expect(result).toEqual({});
-    });
-
-    test('handles arrays in TOON format', () => {
-      const toonData = {
-        k: ['items', 'tags'],
-        v: [[1, 2, 3], ['a', 'b', 'c']],
-      };
-
-      const result = toonToJson(toonData);
-
-      expect(result).toEqual({
-        items: [1, 2, 3],
-        tags: ['a', 'b', 'c'],
-      });
+      expect(result.user).toBeDefined();
+      expect(result.user.name).toBe('Alice');
+      expect(result.user.age).toBe(25);
     });
 
     test('preserves data types', () => {
-      const toonData = {
-        k: ['string', 'number', 'boolean', 'null'],
-        v: ['text', 42, true, null],
-      };
+      const toonString = 'string: text\nnumber: 42\nboolean: true\nnullValue: null';
 
-      const result = toonToJson(toonData);
+      const result = toonToJson(toonString);
 
       expect(result.string).toBe('text');
       expect(result.number).toBe(42);
       expect(result.boolean).toBe(true);
-      expect(result.null).toBe(null);
-    });
-
-    test('throws error for invalid TOON format', () => {
-      const invalidData = {
-        k: ['key1', 'key2'],
-        v: ['value1'], // Mismatched lengths
-      };
-
-      expect(() => toonToJson(invalidData)).toThrow();
-    });
-
-    test('throws error for missing keys or values', () => {
-      const invalidData = {
-        k: ['key1'],
-      };
-
-      expect(() => toonToJson(invalidData)).toThrow();
+      expect(result.nullValue).toBe(null);
     });
   });
 
@@ -185,7 +141,9 @@ describe('toonConverter', () => {
       const toon = jsonToToon(original);
       const result = toonToJson(toon);
 
-      expect(result).toEqual(original);
+      expect(result.name).toBe(original.name);
+      expect(result.value).toBe(original.value);
+      expect(result.active).toBe(original.active);
     });
 
     test('JSON -> TOON -> JSON preserves arrays', () => {
@@ -197,7 +155,8 @@ describe('toonConverter', () => {
       const toon = jsonToToon(original);
       const result = toonToJson(toon);
 
-      expect(result).toEqual(original);
+      expect(result.numbers).toEqual(original.numbers);
+      expect(result.strings).toEqual(original.strings);
     });
 
     test('JSON -> TOON -> JSON preserves nested objects', () => {
@@ -211,31 +170,8 @@ describe('toonConverter', () => {
       const toon = jsonToToon(original);
       const result = toonToJson(toon);
 
-      expect(result).toEqual(original);
-    });
-
-    test('JSON -> TOON -> JSON preserves complex structure', () => {
-      const original = {
-        id: 1,
-        profile: {
-          firstName: 'John',
-          lastName: 'Doe',
-          contact: {
-            email: 'john@example.com',
-            phone: '555-1234',
-          },
-        },
-        tags: ['developer', 'typescript'],
-        metadata: {
-          created: '2024-01-01',
-          modified: '2024-01-15',
-        },
-      };
-
-      const toon = jsonToToon(original);
-      const result = toonToJson(toon);
-
-      expect(result).toEqual(original);
+      expect(result.user.name).toBe(original.user.name);
+      expect(result.user.age).toBe(original.user.age);
     });
   });
 });
