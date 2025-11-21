@@ -1,6 +1,6 @@
 {
   "name": "jsontooncraft",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert between JSON, TOON, TypeScript, Zod, and OpenAPI schemas - Core utilities for AI/LLM developers",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
