@@ -72,7 +72,7 @@ Converts JSON data to all supported formats in one call.
   typescript: string;      // TypeScript interface
   zod: string;            // Zod schema
   openapi: string;        // OpenAPI schema (JSON string)
-  toon: string;           // TOON format (JSON string)
+  toon: string;           // TOON format (YAML-like string)
   tokenStats: {
     json: number;         // Estimated tokens for JSON
     toon: number;         // Estimated tokens for TOON
@@ -256,7 +256,7 @@ Converts JSON to TOON (Token-Optimized Object Notation) format.
 **Parameters:**
 - `data: any` - The JSON data to convert
 
-**Returns:** `string` - TOON format as JSON string
+**Returns:** `string` - TOON format string (YAML-like)
 
 **Example:**
 ```typescript
@@ -270,15 +270,15 @@ const data = {
 };
 
 const toonFormat = jsonToToon(data);
-console.log(JSON.parse(toonFormat));
+console.log(toonFormat);
 ```
 
 **Output:**
-```json
-{
-  "k": ["userName", "userEmail", "userRole", "userStatus"],
-  "v": ["alice", "alice@example.com", "admin", "active"]
-}
+```
+userName: alice
+userEmail: alice@example.com
+userRole: admin
+userStatus: active
 ```
 
 ### toonToJson(toonData)
@@ -286,7 +286,7 @@ console.log(JSON.parse(toonFormat));
 Converts TOON format back to standard JSON.
 
 **Parameters:**
-- `toonData: string | object` - TOON formatted data (string or parsed object)
+- `toonData: string` - TOON formatted data string
 
 **Returns:** `any` - Standard JSON object
 
@@ -294,12 +294,11 @@ Converts TOON format back to standard JSON.
 ```typescript
 import { toonToJson } from 'jsontooncraft';
 
-const toonData = {
-  k: ["id", "name", "active"],
-  v: [123, "Bob", true]
-};
+const toonString = `id: 123
+name: Bob
+active: true`;
 
-const json = toonToJson(toonData);
+const json = toonToJson(toonString);
 console.log(json);
 // Output: { id: 123, name: "Bob", active: true }
 ```
@@ -352,8 +351,8 @@ const originalData = {
   customerPhone: "555-1234"
 };
 
-const toonData = JSON.parse(jsonToToon(originalData));
-const comparison = compareTokens(originalData, toonData);
+const toonStr = jsonToToon(originalData);
+const comparison = compareTokens(originalData, toonStr);
 
 console.log(`JSON tokens: ${comparison.json}`);
 console.log(`TOON tokens: ${comparison.toon}`);
@@ -420,14 +419,19 @@ const contextData = {
   documentTitle: "Annual Report",
   documentAuthor: "John Doe",
   documentDate: "2024-01-15",
-  // ... more fields
+  documentPages: 150,
+  sections: ["intro", "summary", "conclusion"]
 };
 
 // Convert to TOON to save tokens
 const toonFormat = jsonToToon(contextData);
-const stats = compareTokens(contextData, JSON.parse(toonFormat));
+const stats = compareTokens(contextData, toonFormat);
 
-console.log(`Save ${stats.savings.toFixed(1)}% tokens using TOON!`);
+console.log(`TOON format:\n${toonFormat}`);
+console.log(`\nToken comparison:`);
+console.log(`JSON: ${stats.json} tokens`);
+console.log(`TOON: ${stats.toon} tokens`);
+console.log(`Savings: ${stats.savings.toFixed(1)}%`);
 ```
 
 ### 5. Full Conversion Pipeline
